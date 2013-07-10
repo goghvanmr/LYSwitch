@@ -19,5 +19,6 @@
 - (id)initWithParentSwitch:(LYSwitch *)parentSwitch;
 
 - (void)grow;
+- (void)shrink;
 
 @end

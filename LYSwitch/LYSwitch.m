@@ -60,35 +60,16 @@
 - (void)layoutSubviews
 {
     [super layoutSubviews];
-    
-    _track = [[LYSwitchTrack alloc]initWithParentSwitch:self];
-    [self addSubview:self.track];
-    
-//    CGRect knobFrame = [self frameForKnob];
-//    _knob = [[LYSwitchKnob alloc]initWithFrame:knobFrame];
-//    _knob.parentSwitch = self;
-    _knob = [[LYSwitchKnob alloc]initWithParentSwitch:self];
-    [self addSubview:self.knob];
-}
 
-- (CGRect)frameForKnob
-{
-    CGFloat knobRadius = self.bounds.size.height - 2;
-    CGFloat knobOffset = (self.bounds.size.height - knobRadius) / 2.0f;
-    
-    CGRect knobFrame;
-    
-    if (self.isOn) {
-        knobFrame = CGRectMake(knobOffset, knobOffset, knobRadius, knobRadius);
-    }
-    else {
-        knobFrame = CGRectMake(knobOffset + self.bounds.size.width - knobRadius,
-                               knobOffset,
-                               knobRadius,
-                               knobRadius);
+    if (!_track) {
+        _track = [[LYSwitchTrack alloc]initWithParentSwitch:self];
+        [self addSubview:self.track];
     }
     
-    return knobFrame;
+    if (!_knob){
+        _knob = [[LYSwitchKnob alloc]initWithParentSwitch:self];
+        [self addSubview:self.knob];
+    }
 }
 
 - (void)didTap:(UITapGestureRecognizer *)gesture
@@ -100,11 +81,36 @@
 
 - (void)didPan:(UIPanGestureRecognizer *)gesture
 {
+    CGPoint velocity = [gesture velocityInView:self];
+    
+    if (!((velocity.x < 0 && !self.isOn) ||
+        (velocity.x > 0 && self.isOn))) {
+        return;
+    }
+    
     if (gesture.state == UIGestureRecognizerStateBegan) {
+        
         [self.knob grow];
     }
+    else if (gesture.state == UIGestureRecognizerStateChanged) {
+        CGPoint currentTouchLocation = [gesture locationInView: self];
+        
+        CGFloat width = self.frame.size.width;
+        if ((!self.isOn && currentTouchLocation.x <= width - width*0.7)
+            || (self.isOn && currentTouchLocation.x >= width*0.7)) {
+            [self toggleSwitch];
+        }
+
+    }
     else if (gesture.state == UIGestureRecognizerStateEnded){
-        // TODO
+        CGPoint currentTouchLocation = [gesture locationInView: self];
+        
+        CGFloat width = self.frame.size.width;
+        if (!(!self.isOn && currentTouchLocation.x <= width - width*0.7)
+            || (self.isOn && currentTouchLocation.x >= width*0.7)) {
+            NSLog(@"XXXX");
+            [self.knob shrink];
+        }
     }
 }
 

@@ -12,15 +12,25 @@
 
 @interface LYSwitchKnob()
 
+@property (nonatomic)BOOL isGrow;
+
 @end
 
 @implementation LYSwitchKnob
 
 @synthesize parentSwitch = _parentSwitch;
+@synthesize isGrow = _isGrow;
 
 - (id)initWithParentSwitch:(LYSwitch *)parentSwitch{
     _parentSwitch = parentSwitch;
-    
+
+//    CGRect frame;
+//    if (_isGrow) {
+//        frame = [self frameStateGrown];
+//    }
+//    else {
+//        frame = [self frameStateNormal];
+//    }
     CGRect frame = [self frameStateNormal];
 //    CGRect frame = [self frameStateGrown];
     
@@ -102,6 +112,17 @@
                         options:UIViewAnimationOptionCurveEaseOut
                      animations:^{
                          self.frame = [self frameStateGrown];
+                     }
+                     completion:nil
+     ];
+}
+
+- (void)shrink{
+    [UIView animateWithDuration:0.25
+                          delay:fabs(0.25 - 0.25)
+                        options:UIViewAnimationOptionCurveEaseOut
+                     animations:^{
+                         self.frame = [self frameStateNormal];
                      }
                      completion:nil
      ];

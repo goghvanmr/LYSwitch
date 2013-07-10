@@ -14,5 +14,4 @@
 @property (nonatomic, strong) UIColor *trackColorWhenOff;
 @property (nonatomic, strong) UIColor *trackColorWhenOn;
 
-- (CGRect)frameForKnob;
 @end
