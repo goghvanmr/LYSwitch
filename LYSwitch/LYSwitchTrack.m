@@ -11,6 +11,9 @@
 #import "LYSwitchTrack.h"
 #import "LYSwitch.h"
 
+#define TRACK_BORDER_WIDTH 1.0
+#define TRACK_TOGGLE_ANIMATION_DURATION 0.20
+
 @interface LYSwitchTrack()
 
 @end
@@ -20,6 +23,8 @@
 @synthesize colorWhenOff = _colorWhenOff;
 @synthesize colorWhenOn = _colorWhenOn;
 @synthesize parentSwitch = _parentSwitch;
+
+#pragma mark - Init func
 
 -(id)initWithParentSwitch:(LYSwitch *)parentSwitch
 {
@@ -33,17 +38,19 @@
         
         CGFloat cornerRadius = frame.size.height/2.0f;
         [self.layer setCornerRadius:cornerRadius];
-        [self.layer setBorderWidth:1.5];
+        [self.layer setBorderWidth:TRACK_BORDER_WIDTH];
         
         [self setOn:_parentSwitch.isOn];
     }
     return self;
 }
 
+#pragma mark - Switch
+
 -(void)setOn:(BOOL)on animated:(BOOL)animated
 {
     if (animated) {
-        [UIView animateWithDuration:0.25
+        [UIView animateWithDuration:TRACK_TOGGLE_ANIMATION_DURATION
                               delay:0
                             options:UIViewAnimationOptionCurveEaseOut
                          animations:^{

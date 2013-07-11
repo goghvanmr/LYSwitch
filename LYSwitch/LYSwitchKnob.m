@@ -7,8 +7,17 @@
 //
 
 #import <QuartzCore/QuartzCore.h>
-
 #import "LYSwitchKnob.h"
+
+#define KNOB_BORDER_WIDTH 1.5f
+#define KNOB_BORDER_CG_COLOR [[UIColor colorWithWhite: 0.9f alpha:1.0f]CGColor]
+#define KNOB_SHADOW_CG_COLOR [[UIColor grayColor] CGColor]
+#define KNOB_SHADOW_OFFSET CGSizeMake(0, 4)
+#define KNOB_SHADOW_OPACITY 0.6f
+#define KNOB_SHADOW_RADIUS 1.0f
+
+#define KNOB_ANIMATION_DURATION 0.25
+#define KNOB_ANIMATION_DELAY 0
 
 @interface LYSwitchKnob()
 
@@ -21,18 +30,12 @@
 @synthesize parentSwitch = _parentSwitch;
 @synthesize isGrow = _isGrow;
 
+#pragma mark - Init func
+
 - (id)initWithParentSwitch:(LYSwitch *)parentSwitch{
     _parentSwitch = parentSwitch;
 
-//    CGRect frame;
-//    if (_isGrow) {
-//        frame = [self frameStateGrown];
-//    }
-//    else {
-//        frame = [self frameStateNormal];
-//    }
     CGRect frame = [self frameStateNormal];
-//    CGRect frame = [self frameStateGrown];
     
     self = [super initWithFrame:frame];
     if (self) {
@@ -40,33 +43,36 @@
         
         CGFloat cornerRadius = frame.size.height/2.0f;
         [self.layer setCornerRadius:cornerRadius];
-        [self.layer setBorderWidth:1.5];
-        [self.layer setBorderColor:[[UIColor colorWithWhite: 0.9f alpha:1.0f]CGColor]];
+        [self.layer setBorderWidth:KNOB_BORDER_WIDTH];
+        [self.layer setBorderColor:KNOB_BORDER_CG_COLOR];
         
-        [self.layer setShadowColor:[[UIColor grayColor] CGColor]];
-        [self.layer setShadowOffset:CGSizeMake(0, 4)];
-        [self.layer setShadowOpacity:0.60f];
-        [self.layer setShadowRadius:1.0];
+        [self.layer setShadowColor:KNOB_SHADOW_CG_COLOR];
+        [self.layer setShadowOffset:KNOB_SHADOW_OFFSET];
+        [self.layer setShadowOpacity:KNOB_SHADOW_OPACITY];
+        [self.layer setShadowRadius:KNOB_SHADOW_RADIUS];
     }
     return self;
 }
 
+#pragma mark - Switch
+
 - (void)setOn:(BOOL)on animated:(BOOL)animated
 {
-    [UIView animateWithDuration:0.25
-                          delay:fabs(0.25 - 0.25)
+    [UIView animateWithDuration:KNOB_ANIMATION_DURATION
+                          delay:KNOB_ANIMATION_DELAY
                         options:UIViewAnimationOptionCurveEaseOut
                      animations:^{
                          self.frame = [self frameStateNormal];
-//                         self.frame = [self frameStateGrown];
                      }
                      completion:nil
      ];
 }
 
+#pragma mark - UI
+
 - (CGRect)frameStateNormal
 {
-    CGFloat radius = self.parentSwitch.bounds.size.height - 2;
+    CGFloat radius = self.parentSwitch.bounds.size.height;
     CGFloat offset = (self.parentSwitch.bounds.size.height - radius) / 2.0f;
     
     CGRect frame;
@@ -86,7 +92,7 @@
 
 - (CGRect)frameStateGrown
 {
-    CGFloat radius = self.parentSwitch.bounds.size.height - 2;
+    CGFloat radius = self.parentSwitch.bounds.size.height;
     CGFloat offset = (self.parentSwitch.bounds.size.height - radius) / 2.0f;
     
     CGRect frame;
@@ -107,8 +113,8 @@
 }
 
 - (void)grow{
-    [UIView animateWithDuration:0.25
-                          delay:fabs(0.25 - 0.25)
+    [UIView animateWithDuration:KNOB_ANIMATION_DURATION
+                          delay:KNOB_ANIMATION_DELAY
                         options:UIViewAnimationOptionCurveEaseOut
                      animations:^{
                          self.frame = [self frameStateGrown];
@@ -118,8 +124,8 @@
 }
 
 - (void)shrink{
-    [UIView animateWithDuration:0.25
-                          delay:fabs(0.25 - 0.25)
+    [UIView animateWithDuration:KNOB_ANIMATION_DURATION
+                          delay:KNOB_ANIMATION_DELAY
                         options:UIViewAnimationOptionCurveEaseOut
                      animations:^{
                          self.frame = [self frameStateNormal];

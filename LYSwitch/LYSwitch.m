@@ -38,6 +38,8 @@
 @synthesize trackColorWhenOff = _trackColorWhenOff;
 @synthesize trackColorWhenOn = _trackColorWhenOn;
 
+#pragma mark - UIView
+
 - (id)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
@@ -72,6 +74,8 @@
     }
 }
 
+#pragma mark - Gesture handler
+
 - (void)didTap:(UITapGestureRecognizer *)gesture
 {
     if (gesture.state == UIGestureRecognizerStateEnded) {
@@ -81,13 +85,6 @@
 
 - (void)didPan:(UIPanGestureRecognizer *)gesture
 {
-    CGPoint velocity = [gesture velocityInView:self];
-    
-    if (!((velocity.x < 0 && !self.isOn) ||
-        (velocity.x > 0 && self.isOn))) {
-        return;
-    }
-    
     if (gesture.state == UIGestureRecognizerStateBegan) {
         
         [self.knob grow];
@@ -108,11 +105,36 @@
         CGFloat width = self.frame.size.width;
         if (!(!self.isOn && currentTouchLocation.x <= width - width*0.7)
             || (self.isOn && currentTouchLocation.x >= width*0.7)) {
-            NSLog(@"XXXX");
             [self.knob shrink];
         }
     }
 }
+
+#pragma mark - UIGestureRecognizerDelegate
+
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
+{
+    if([gestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]]){
+        UIPanGestureRecognizer *panGesture = (UIPanGestureRecognizer *)gestureRecognizer;
+        return [self panGestureRecognizerShouldBegin:panGesture];
+    }
+    
+    return YES;
+}
+
+- (BOOL)panGestureRecognizerShouldBegin:(UIPanGestureRecognizer *)panGestureRecognizer
+{
+    CGPoint velocity = [panGestureRecognizer velocityInView:self];
+    
+    if (!((velocity.x < 0 && !self.isOn) ||
+          (velocity.x > 0 && self.isOn))) {
+        return NO;
+    }
+    
+    return YES;
+}
+
+#pragma mark - Switch
 
 - (void)toggleSwitch
 {
